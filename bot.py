@@ -17,6 +17,10 @@ if __name__ == '__main__':
         print("שבת - לא שולחים הודעות היום.")
         raise SystemExit(0)
 
+    # Always send once per run so you can confirm the workflow is working
+    bot.send_message(CHAT_ID, MESSAGE)
+    print("הודעה קבועה נשלחה (אישור תקינות).")
+
     # Seed with today's date so all hourly runs agree on the same send-hours
     rng = random.Random(int(now.strftime('%Y%m%d')))
     num_messages = rng.randint(3, 10)
@@ -26,9 +30,9 @@ if __name__ == '__main__':
     if now.hour in send_hours:
         try:
             bot.send_message(CHAT_ID, MESSAGE)
-            print(f"הודעה נשלחה! שעה {now.hour} UTC (שעות היום: {send_hours})")
+            print(f"הודעה רנדומלית נשלחה! שעה {now.hour} UTC (שעות היום: {send_hours})")
         except Exception as e:
             print(f"אירעה שגיאה: {e}")
             raise
     else:
-        print(f"שעה {now.hour} UTC - לא שולחים עכשיו. שעות שליחה היום: {send_hours}")
+        print(f"שעה {now.hour} UTC - אין הודעה רנדומלית עכשיו. שעות שליחה היום: {send_hours}")
