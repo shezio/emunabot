@@ -1,38 +1,34 @@
 import telebot
-import time
+import os
 import random
+from datetime import datetime, timezone
 
-# הכנס כאן את הנתונים שלך
-TOKEN = '8872096335:AAGn1ytYA6aVelKViHZ3J2m_xw2tBU0JyWw'
-CHAT_ID = '964800079'
+TOKEN = os.environ['TELEGRAM_TOKEN']
+CHAT_ID = os.environ['TELEGRAM_CHAT_ID']
 
 bot = telebot.TeleBot(TOKEN)
 MESSAGE = "לא לכעוס או להיות עצוב - בורא עולם דואג להכל ❤️"
 
-def send_random_reminders():
-    print("הבוט התחיל לפעול וישלח תזכורות...")
-    
-    while True:
+if __name__ == '__main__':
+    now = datetime.now(timezone.utc)
+
+    # Saturday = weekday 5
+    if now.weekday() == 5:
+        print("שבת - לא שולחים הודעות היום.")
+        raise SystemExit(0)
+
+    # Seed with today's date so all hourly runs agree on the same send-hours
+    rng = random.Random(int(now.strftime('%Y%m%d')))
+    num_messages = rng.randint(3, 10)
+    # Hours 7-22 UTC  (= roughly 10:00-01:00 Israel time)
+    send_hours = sorted(rng.sample(range(7, 23), num_messages))
+
+    if now.hour in send_hours:
         try:
-            # שליחת ההודעה
             bot.send_message(CHAT_ID, MESSAGE)
-            print("הודעה נשלחה בהצלחה!")
-            
-            # הגרלת זמן המתנה עד להודעה הבאה
-            # מחשב זמן רנדומלי בין 3 שעות (10800 שניות) ל-7 שעות (25200 שניות)
-            # אפשר לשנות את המספרים כדי לשנות את התדירות
-            sleep_time = random.randint(10800, 25200) 
-            
-            hours = sleep_time // 3600
-            minutes = (sleep_time % 3600) // 60
-            print(f"ההודעה הבאה תישלח בעוד {hours} שעות ו-{minutes} דקות.")
-            
-            time.sleep(sleep_time)
-            
+            print(f"הודעה נשלחה! שעה {now.hour} UTC (שעות היום: {send_hours})")
         except Exception as e:
             print(f"אירעה שגיאה: {e}")
-            # במקרה של שגיאה (למשל ניתוק אינטרנט), נחכה דקה וננסה שוב
-            time.sleep(60)
-
-if __name__ == '__main__':
-    send_random_reminders()
+            raise
+    else:
+        print(f"שעה {now.hour} UTC - לא שולחים עכשיו. שעות שליחה היום: {send_hours}")
