@@ -1,6 +1,8 @@
 name: Telegram Reminder Cron
 
 on:
+  push:
+    branches: [main]
   schedule:
     # מריץ כל שעה; הסקריפט בוחר 3-10 שעות שליחה רנדומליות ליום
     - cron: '0 * * * *'
