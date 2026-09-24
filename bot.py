@@ -3,6 +3,7 @@ import os
 import random
 from datetime import datetime, timezone
 
+
 TOKEN = os.environ['TELEGRAM_TOKEN']
 CHAT_ID = os.environ['TELEGRAM_CHAT_ID']
 
